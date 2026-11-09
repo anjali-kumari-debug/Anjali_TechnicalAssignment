@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field_error %}
+{% block title %}{{ 'Edit' if product else 'New' }} product{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>{{ 'Edit product ' ~ product.product_code if product else 'New product' }}</h1>
+  {% if errors %}<div class="flash flash-error">Please correct the highlighted fields.</div>{% endif %}
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Product code <input name="product_code" value="{{ form.get('product_code', '') }}" maxlength="50" required></label>
+    {{ field_error(errors, 'product_code') }}
+    <label>Name <input name="name" value="{{ form.get('name', '') }}" maxlength="150" required></label>
+    {{ field_error(errors, 'name') }}
+    <label>Category <input name="category" value="{{ form.get('category', '') }}" maxlength="100" required></label>
+    {{ field_error(errors, 'category') }}
+    <label>Price (₹) <input name="price" inputmode="decimal" value="{{ form.get('price', '') }}" required></label>
+    {{ field_error(errors, 'price') }}
+    {% if not product %}
+    <label>Opening stock <input name="stock_quantity" type="number" min="0" step="1" value="{{ form.get('stock_quantity', '0') }}"></label>
+    {{ field_error(errors, 'stock_quantity') }}
+    {% else %}
+    <p class="muted">Stock: {{ product.stock_quantity }}. Use a stock adjustment on the product page to change it.</p>
+    {% endif %}
+    <label class="check"><input type="checkbox" name="is_active" {% if form.get('is_active') %}checked{% endif %}> Active</label>
+    <div class="form-actions">
+      <button class="btn primary">Save</button>
+      <a href="{{ url_for('web.product_detail', product_id=product.id) if product else url_for('web.product_list') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

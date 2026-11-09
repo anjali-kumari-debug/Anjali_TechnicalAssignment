@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager, active_badge %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Products</h1>
+  {% if current_user.is_admin %}
+  <div>
+    <a class="btn" href="{{ url_for('web.product_import') }}">Import CSV</a>
+    <a class="btn primary" href="{{ url_for('web.product_new') }}">New product</a>
+  </div>
+  {% endif %}
+</div>
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search code or name">
+  <select name="category">
+    <option value="">All categories</option>
+    {% for cat in categories %}<option {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat }}</option>{% endfor %}
+  </select>
+  {% if current_user.is_admin %}
+  <select name="status">
+    <option value="">All statuses</option>
+    <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+    <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+  </select>
+  {% endif %}
+  <button class="btn">Filter</button>
+</form>
+<table>
+  <thead><tr><th>Code</th><th>Name</th><th>Category</th><th class="num">Price</th><th class="num">Stock</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for p in pagination.items %}
+    <tr>
+      <td>{% if current_user.is_admin %}<a href="{{ url_for('web.product_detail', product_id=p.id) }}">{{ p.product_code }}</a>{% else %}{{ p.product_code }}{% endif %}</td>
+      <td>{{ p.name }}</td><td>{{ p.category }}</td>
+      <td class="num">{{ p.price|inr }}</td><td class="num">{{ p.stock_quantity }}</td>
+      <td>{{ active_badge(p.is_active) }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No products found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{{ pager(pagination, 'web.product_list') }}
+{% endblock %}

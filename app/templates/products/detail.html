@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "_macros.html" import active_badge %}
+{% block title %}{{ product.product_code }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ product.product_code }} · {{ product.name }}</h1>
+  <div>
+    <a class="btn" href="{{ url_for('web.product_edit', product_id=product.id) }}">Edit</a>
+    <form method="post" action="{{ url_for('web.product_delete', product_id=product.id) }}" class="inline"
+          data-confirm="Delete product {{ product.product_code }}? This cannot be undone.">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn danger">Delete</button>
+    </form>
+  </div>
+</div>
+<div class="grid2">
+  <div class="card">
+    <dl class="facts">
+      <dt>Category</dt><dd>{{ product.category }}</dd>
+      <dt>Price</dt><dd>{{ product.price|inr }}</dd>
+      <dt>Stock</dt><dd><strong>{{ product.stock_quantity }}</strong></dd>
+      <dt>Status</dt><dd>{{ active_badge(product.is_active) }}</dd>
+    </dl>
+  </div>
+  <div class="card">
+    <h2>Adjust stock</h2>
+    <form method="post" action="{{ url_for('web.product_adjust', product_id=product.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Change (+ to add, − to remove) <input name="quantity_change" type="number" step="1" required placeholder="e.g. 10 or -3"></label>
+      <label>Reason <input name="reason" maxlength="255" required placeholder="e.g. Stock count correction"></label>
+      <button class="btn primary">Apply adjustment</button>
+    </form>
+  </div>
+</div>
+<h2>Recent stock movements</h2>
+<table>
+  <thead><tr><th>When</th><th>Type</th><th class="num">Change</th><th>Order</th><th>Reason</th><th>By</th></tr></thead>
+  <tbody>
+  {% for m in movements %}
+    <tr>
+      <td>{{ m.created_at.strftime('%Y-%m-%d %H:%M') }}</td><td>{{ m.movement_type }}</td>
+      <td class="num {{ 'pos' if m.quantity_change > 0 else 'neg' }}">{{ '%+d'|format(m.quantity_change) }}</td>
+      <td>{% if m.order %}<a href="{{ url_for('web.order_detail', order_id=m.order.id) }}">{{ m.order.order_number }}</a>{% endif %}</td>
+      <td>{{ m.reason }}</td><td>{{ m.creator.name }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No movements yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
