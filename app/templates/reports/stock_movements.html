@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Stock movement history{% endblock %}
+{% block content %}
+<h1>Stock movement history</h1>
+{% include "reports/_nav.html" %}
+<form class="filters" method="get">
+  <select name="product_id">
+    <option value="">All products</option>
+    {% for p in products %}<option value="{{ p.id }}" {% if product_id == p.id %}selected{% endif %}>{{ p.product_code }} · {{ p.name }}</option>{% endfor %}
+  </select>
+  <button class="btn">Filter</button>
+</form>
+<table>
+  <thead><tr><th>When</th><th>Product</th><th>Type</th><th class="num">Change</th><th>Order</th><th>Reason</th><th>By</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td>{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</td><td>{{ r.product_code }} · {{ r.product_name }}</td><td>{{ r.movement_type }}</td>
+        <td class="num {{ 'pos' if r.quantity_change > 0 else 'neg' }}">{{ '%+d'|format(r.quantity_change) }}</td>
+        <td>{{ r.order_number or '' }}</td><td>{{ r.reason }}</td><td>{{ r.created_by }}</td></tr>
+  {% else %}
+    <tr><td colspan="7" class="muted">No movements.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="muted">Showing the latest 500 movements.</p>
+{% endblock %}

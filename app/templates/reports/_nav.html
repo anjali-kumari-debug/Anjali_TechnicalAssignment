@@ -1,0 +1,7 @@
+<nav class="tabs">
+  <a href="{{ url_for('web.report_customer_sales') }}" {% if request.endpoint == 'web.report_customer_sales' %}class="active"{% endif %}>Customer sales</a>
+  <a href="{{ url_for('web.report_product_sales') }}" {% if request.endpoint == 'web.report_product_sales' %}class="active"{% endif %}>Product sales</a>
+  <a href="{{ url_for('web.report_low_stock') }}" {% if request.endpoint == 'web.report_low_stock' %}class="active"{% endif %}>Low stock</a>
+  <a href="{{ url_for('web.report_stock_movements') }}" {% if request.endpoint == 'web.report_stock_movements' %}class="active"{% endif %}>Stock movements</a>
+</nav>
+<p class="muted">Sales figures include Confirmed orders only.</p>

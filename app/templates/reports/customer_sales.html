@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Customer sales summary{% endblock %}
+{% block content %}
+<h1>Customer sales summary</h1>
+{% include "reports/_nav.html" %}
+<form class="filters" method="get">
+  <label>From <input type="date" name="date_from" value="{{ date_from }}"></label>
+  <label>To <input type="date" name="date_to" value="{{ date_to }}"></label>
+  <button class="btn">Apply</button>
+</form>
+{% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+<table>
+  <thead><tr><th>Customer</th><th>City</th><th class="num">Confirmed orders</th><th class="num">Total sales (after discount)</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td>{{ r.name }}{% if not r.is_active %} <span class="muted">(inactive)</span>{% endif %}</td><td>{{ r.city }}</td>
+        <td class="num">{{ r.confirmed_orders }}</td><td class="num">{{ r.total_sales|inr }}</td></tr>
+  {% else %}
+    <tr><td colspan="4" class="muted">No customers.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

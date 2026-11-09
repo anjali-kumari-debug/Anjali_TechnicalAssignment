@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import active_badge %}
+{% block title %}Low stock{% endblock %}
+{% block content %}
+<h1>Low stock report</h1>
+{% include "reports/_nav.html" %}
+<form class="filters" method="get">
+  <label>Show products with stock below <input type="number" name="threshold" min="0" step="1" value="{{ threshold }}"></label>
+  <button class="btn">Apply</button>
+</form>
+{% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+<table>
+  <thead><tr><th>Code</th><th>Product</th><th>Category</th><th class="num">Stock</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td><a href="{{ url_for('web.product_detail', product_id=r.id) }}">{{ r.product_code }}</a></td><td>{{ r.name }}</td><td>{{ r.category }}</td>
+        <td class="num">{{ r.stock_quantity }}</td><td>{{ active_badge(r.is_active) }}</td></tr>
+  {% else %}
+    <tr><td colspan="5" class="muted">No products below the threshold.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

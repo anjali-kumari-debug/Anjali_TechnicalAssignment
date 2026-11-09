@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Product sales summary{% endblock %}
+{% block content %}
+<h1>Product sales summary</h1>
+{% include "reports/_nav.html" %}
+<table>
+  <thead><tr><th>Code</th><th>Product</th><th class="num">Quantity sold</th><th class="num">Gross value (before order discount)</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td>{{ r.product_code }}</td><td>{{ r.name }}</td><td class="num">{{ r.quantity_sold }}</td><td class="num">{{ r.gross_value|inr }}</td></tr>
+  {% else %}
+    <tr><td colspan="4" class="muted">No confirmed sales yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
