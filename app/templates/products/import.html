@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Import products{% endblock %}
+{% block content %}
+<h1>Import products from CSV</h1>
+<div class="card">
+  <p>Required header (first row): <code>{{ columns|join(',') }}</code></p>
+  <p class="muted">Status is <code>Active</code> or <code>Inactive</code>. Price may have up to 2 decimals; stock is a whole number.
+     If <strong>any</strong> row is invalid, <strong>nothing</strong> is imported. Opening stock is recorded as a stock movement.</p>
+  <form method="post" enctype="multipart/form-data" id="import-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>CSV file <input type="file" name="file" accept=".csv,text/csv" required></label>
+    <button class="btn primary" id="import-button">Validate and import</button>
+  </form>
+</div>
+{% if message %}
+  <div class="flash flash-error">{{ message }}</div>
+{% endif %}
+{% if errors %}
+<table>
+  <thead><tr><th class="num">Row</th><th>Column</th><th>Problem</th></tr></thead>
+  <tbody>
+  {% for e in errors %}<tr><td class="num">{{ e.row }}</td><td>{{ e.field }}</td><td>{{ e.message }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+  // Prevent double submission while the file uploads.
+  document.getElementById("import-form").addEventListener("submit", () => {
+    document.getElementById("import-button").disabled = true;
+  });
+</script>
+{% endblock %}

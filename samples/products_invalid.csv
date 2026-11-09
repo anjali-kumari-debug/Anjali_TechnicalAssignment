@@ -1,0 +1,10 @@
+product_code,product_name,category,price,stock_quantity,status
+PRD-201,Laptop Bag,Accessories,1299,10,Active
+PRD-202,,Accessories,499,5,Active
+PRD-203,Monitor Arm,Furniture,-850,4,Active
+PRD-204,HDMI Cable,Cables,299,ten,Active
+PRD-205,Mouse Pad,Accessories,199,7,Available
+prd-201,Laptop Bag Copy,Accessories,1299,3,Active
+PRD-206,Ethernet Cable,Cables,149.999,20,Active
+PRD-207,USB Drive,Storage,650,2.5,Active
+PRD-001,Keyboard,Accessories,1500,20,Active

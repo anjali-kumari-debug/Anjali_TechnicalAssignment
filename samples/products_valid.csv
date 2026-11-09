@@ -1,0 +1,6 @@
+product_code,product_name,category,price,stock_quantity,status
+PRD-101,Wireless Keyboard,Accessories,1899,25,Active
+PRD-102,Wireless Mouse,Accessories,749.50,40,Active
+PRD-103,27in Monitor,Displays,15999,6,Active
+PRD-104,Webcam HD,Accessories,2299,0,Active
+PRD-105,Desk Lamp,Furniture,1250.00,12,Inactive
