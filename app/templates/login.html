@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Log in</h1>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email <input type="email" name="email" value="{{ email or '' }}" required autofocus></label>
+    <label>Password <input type="password" name="password" required></label>
+    <button class="btn primary">Log in</button>
+  </form>
+  <p class="muted">Sample accounts are created with <code>flask seed</code> (see README).</p>
+</div>
+{% endblock %}
