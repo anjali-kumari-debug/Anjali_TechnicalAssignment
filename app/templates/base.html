@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" href="data:,">
+  <title>{% block title %}Sales & Inventory{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+{% if current_user.is_authenticated %}
+<header class="topbar">
+  <a class="brand" href="{{ url_for('web.index') }}">Sales &amp; Inventory</a>
+  <nav>
+    <a href="{{ url_for('web.order_list') }}">Orders</a>
+    <a href="{{ url_for('web.customer_list') }}">Customers</a>
+    <a href="{{ url_for('web.product_list') }}">Products</a>
+    {% if current_user.is_admin %}
+      <a href="{{ url_for('web.report_customer_sales') }}">Reports</a>
+    {% endif %}
+  </nav>
+  <div class="who">
+    {{ current_user.name }} <span class="badge">{{ current_user.role }}</span>
+    <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="link">Log out</button>
+    </form>
+  </div>
+</header>
+{% endif %}
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

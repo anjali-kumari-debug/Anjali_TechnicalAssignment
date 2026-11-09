@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Error {{ status }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ status }}</h1>
+  <p>{{ message }}</p>
+  {% if details %}<ul>{% for d in details %}<li>{{ d.message or d }}</li>{% endfor %}</ul>{% endif %}
+  <p><a href="{{ url_for('web.index') }}">Back to orders</a></p>
+</div>
+{% endblock %}
