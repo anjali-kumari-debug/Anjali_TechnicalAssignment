@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit ' ~ order.order_number if order else 'New order' }}{% endblock %}
+{% block content %}
+<h1>{{ 'Edit draft ' ~ order.order_number if order else 'New order' }}</h1>
+<div id="form-errors" class="flash flash-error" hidden></div>
+
+<form id="order-form" novalidate
+      data-order-id="{{ order.id if order else '' }}"
+      data-order='{{ (order.to_dict() if order else {})|tojson|forceescape }}'>
+  <div class="grid2">
+    <label>Customer
+      <select id="customer" required>
+        <option value="">Select an active customer…</option>
+        {% for c in customers %}
+          <option value="{{ c.id }}" {% if order and order.customer_id == c.id %}selected{% endif %}>{{ c.name }} ({{ c.city }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Discount % (0–20)
+      <input id="discount" type="text" inputmode="decimal" value="{{ order.discount_percentage if order else '0' }}">
+    </label>
+  </div>
+  <div class="field-error" data-error-for="customer_id"></div>
+  <div class="field-error" data-error-for="discount_percentage"></div>
+
+  <table id="items">
+    <thead><tr><th>Product</th><th class="num">Price</th><th class="num">In stock</th><th class="num">Quantity</th><th class="num">Amount</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="field-error" data-error-for="items"></div>
+  <button type="button" id="add-row" class="btn">+ Add item</button>
+
+  <table class="totals">
+    <tr><th>Subtotal</th><td id="subtotal" class="num">₹0.00</td></tr>
+    <tr><th>Discount</th><td id="discount-amount" class="num">₹0.00</td></tr>
+    <tr class="grand"><th>Grand total</th><td id="grand-total" class="num">₹0.00</td></tr>
+  </table>
+  <p class="muted">Totals here are a preview; the server recalculates every amount when you save.</p>
+  <div class="form-actions">
+    <button type="submit" id="save" class="btn primary">{{ 'Save changes' if order else 'Save as Draft' }}</button>
+    <a href="{{ url_for('web.order_detail', order_id=order.id) if order else url_for('web.order_list') }}">Cancel</a>
+  </div>
+</form>
+
+<template id="row-template">
+  <tr>
+    <td><select class="product" required><option value="">Select product…</option></select>
+        <div class="field-error row-error"></div></td>
+    <td class="num price">–</td>
+    <td class="num stock">–</td>
+    <td class="num"><input class="qty" type="number" min="1" step="1" value="1" required></td>
+    <td class="num amount">₹0.00</td>
+    <td><button type="button" class="link danger remove-row" title="Remove row">Remove</button></td>
+  </tr>
+</template>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/order_form.js') }}"></script>
+{% endblock %}

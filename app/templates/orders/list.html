@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager, status_badge %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ 'All orders' if current_user.is_admin else 'My orders' }}</h1>
+  <a class="btn primary" href="{{ url_for('web.order_new') }}">New order</a>
+</div>
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ request.args.get('q', '') }}" placeholder="Order number or customer">
+  <select name="status">
+    <option value="">All statuses</option>
+    {% for s in statuses %}<option {% if status == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+  </select>
+  <button class="btn">Filter</button>
+</form>
+<table>
+  <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Status</th><th class="num">Grand total</th>{% if current_user.is_admin %}<th>Created by</th>{% endif %}</tr></thead>
+  <tbody>
+  {% for o in pagination.items %}
+    <tr>
+      <td><a href="{{ url_for('web.order_detail', order_id=o.id) }}">{{ o.order_number }}</a></td>
+      <td>{{ o.order_date.isoformat() }}</td><td>{{ o.customer.name }}</td>
+      <td>{{ status_badge(o.status) }}</td><td class="num">{{ o.grand_total|inr }}</td>
+      {% if current_user.is_admin %}<td>{{ o.creator.name }}</td>{% endif %}
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No orders yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{{ pager(pagination, 'web.order_list') }}
+{% endblock %}

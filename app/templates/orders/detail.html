@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}{{ order.order_number }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ order.order_number }} {{ status_badge(order.status) }}</h1>
+  <div id="order-actions" data-order-id="{{ order.id }}" data-order-number="{{ order.order_number }}">
+    {% if order.status == 'Draft' %}
+      <a class="btn" href="{{ url_for('web.order_edit', order_id=order.id) }}">Edit</a>
+      <button class="btn primary" data-action="confirm">Confirm order</button>
+    {% endif %}
+    {% if order.status in ('Draft', 'Confirmed') %}
+      <button class="btn danger" data-action="cancel">Cancel order</button>
+    {% endif %}
+  </div>
+</div>
+<div id="action-result" class="flash" hidden></div>
+<div class="card">
+  <dl class="facts">
+    <dt>Customer</dt><dd>{{ order.customer.name }}</dd>
+    <dt>Order date</dt><dd>{{ order.order_date.isoformat() }}</dd>
+    <dt>Created by</dt><dd>{{ order.creator.name }}</dd>
+  </dl>
+</div>
+<table>
+  <thead><tr><th>Product</th><th class="num">Quantity</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead>
+  <tbody>
+  {% for item in order.items %}
+    <tr><td>{{ item.product.product_code }} · {{ item.product.name }}</td>
+        <td class="num">{{ item.quantity }}</td><td class="num">{{ item.rate|inr }}</td><td class="num">{{ item.amount|inr }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<table class="totals">
+  <tr><th>Subtotal</th><td class="num">{{ order.subtotal|inr }}</td></tr>
+  <tr><th>Discount ({{ order.discount_percentage }}%)</th><td class="num">{{ order.discount_amount|inr }}</td></tr>
+  <tr class="grand"><th>Grand total</th><td class="num">{{ order.grand_total|inr }}</td></tr>
+</table>
+{% if order.status != 'Draft' %}<p class="muted">{{ order.status }} orders are read-only.</p>{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/order_detail.js') }}"></script>
+{% endblock %}
