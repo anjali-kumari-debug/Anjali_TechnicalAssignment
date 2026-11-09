@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field_error %}
+{% block title %}{{ 'Edit' if customer else 'New' }} customer{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>{{ 'Edit customer' if customer else 'New customer' }}</h1>
+  {% if errors %}<div class="flash flash-error">Please correct the highlighted fields.</div>{% endif %}
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Name <input name="name" value="{{ form.get('name', '') }}" maxlength="150" required></label>
+    {{ field_error(errors, 'name') }}
+    <label>Email <input type="email" name="email" value="{{ form.get('email', '') }}" maxlength="150" required></label>
+    {{ field_error(errors, 'email') }}
+    <label>Mobile <input name="mobile" value="{{ form.get('mobile', '') }}" maxlength="20" required></label>
+    {{ field_error(errors, 'mobile') }}
+    <label>City <input name="city" value="{{ form.get('city', '') }}" maxlength="100" required></label>
+    {{ field_error(errors, 'city') }}
+    <label class="check"><input type="checkbox" name="is_active" {% if form.get('is_active') %}checked{% endif %}> Active</label>
+    <div class="form-actions">
+      <button class="btn primary">Save</button>
+      <a href="{{ url_for('web.customer_list') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

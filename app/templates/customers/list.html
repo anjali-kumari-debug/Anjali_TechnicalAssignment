@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager, active_badge %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Customers</h1>
+  {% if current_user.is_admin %}<a class="btn primary" href="{{ url_for('web.customer_new') }}">New customer</a>{% endif %}
+</div>
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search name, email or mobile">
+  {% if current_user.is_admin %}
+  <select name="status">
+    <option value="">All statuses</option>
+    <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+    <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+  </select>
+  {% endif %}
+  <button class="btn">Filter</button>
+</form>
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>City</th><th>Status</th>{% if current_user.is_admin %}<th></th>{% endif %}</tr></thead>
+  <tbody>
+  {% for c in pagination.items %}
+    <tr>
+      <td>{{ c.name }}</td><td>{{ c.email }}</td><td>{{ c.mobile }}</td><td>{{ c.city }}</td>
+      <td>{{ active_badge(c.is_active) }}</td>
+      {% if current_user.is_admin %}
+      <td class="actions">
+        <a href="{{ url_for('web.customer_edit', customer_id=c.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('web.customer_delete', customer_id=c.id) }}" class="inline"
+              data-confirm="Delete customer {{ c.name }}? This cannot be undone.">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="link danger">Delete</button>
+        </form>
+      </td>
+      {% endif %}
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No customers found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{{ pager(pagination, 'web.customer_list') }}
+{% endblock %}
